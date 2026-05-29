@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jogo do Palitinho</title>
+  <link rel="stylesheet" href="jogo-palitinho.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Jogo do Palitinho</h1>
+    <div id="roundDisplay" class="round" aria-live="polite"></div>
+    <!-- barras laterais de vida/progresso -->
+    <aside id="leftBar" class="side-bar left-bar">
+      <div class="bar-inner">
+        <div class="bar-name" id="leftName">Jogador</div>
+        <div class="bar-track"><div class="bar-fill" id="leftFill" style="height:100%"></div></div>
+        <div class="bar-percent" id="leftPercent">100%</div>
+      </div>
+    </aside>
+    <aside id="rightBar" class="side-bar right-bar">
+      <div class="bar-inner">
+        <div class="bar-name" id="rightName">Computador</div>
+        <div class="bar-track"><div class="bar-fill" id="rightFill" style="height:100%"></div></div>
+        <div class="bar-percent" id="rightPercent">100%</div>
+      </div>
+    </aside>
+
+    <div class="center-image" aria-hidden="true">
+      <!-- simples SVG estilizado como imagem no centro -->
+      <svg width="160" height="100" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="160" height="100" rx="12" fill="#f4f4f8"/>
+        <g stroke="#8b5cf6" stroke-width="4" stroke-linecap="round">
+          <line x1="20" y1="80" x2="140" y2="20" />
+          <line x1="30" y1="80" x2="150" y2="20" />
+          <line x1="40" y1="80" x2="160" y2="20" />
+        </g>
+      </svg>
+    </div>
+
+    <section class="controls">
+      <div class="field">
+        <label for="playerName">Jogador:</label>
+        <input id="playerName" list="nameList" placeholder="Digite um nome" autocomplete="off" />
+        <datalist id="nameList"></datalist>
+      </div>
+
+      <div class="field">
+        <label for="playerGuess">Pedir Palitinhos</label>
+        <input type="number" id="playerGuess" min="0" max="6" value="1" />
+      </div>
+       <!-- <div class="field">
+          <label for="playerGuess">Pedir total (max 6) — faça isto antes de escolher palitinhos:</label>
+          <input type="number" id="playerGuess" min="0" max="6" placeholder="Digite total (0-6)" />
+        </div> <-->
+
+        <div class="field">
+          <label for="playerSticks">Jogar Palitinhos</label>
+          <select id="playerSticks" disabled>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+
+      <div class="buttons">
+        <button id="betBtn">Apostar</button>
+        <button id="newGameBtn">Novo Jogo</button>
+      </div>
+    </section>
+
+    <div id="log" class="log" aria-live="polite"></div>
+
+    <div id="modalOverlay" hidden>
+      <div id="floatingResult" class="floating">
+        <div id="resultDetails"></div>
+        <div id="resultWinner" class="winner"></div>
+        <div class="modal-actions"><button id="closeFloat">Fechar</button></div>
+      </div>
+    </div>
+    <!-- modal de alerta quando uma das barras chegar a 0% -->
+    <div id="loserOverlay" hidden>
+      <div class="loser-box" role="dialog" aria-modal="true">
+        <div class="msg">Bebeu perdedor</div>
+        <div class="sub" id="loserSub">Você acabou a sua barra.</div>
+        <button id="loserReload">Voltar ao jogo</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="jogo-palitinho.js"></script>
+  <!-- botão flutuante de histórico (expande ao passar o mouse) -->
+  <div class="history-float" id="historyFloat">
+    <button id="historyIcon" class="history-icon" aria-label="Histórico de partidas">🏆</button>
+    <div id="historyPanelHover" class="history-panel-hover" aria-hidden="true">
+      <div class="history-panel-inner">
+        <div class="history-header"><strong>Partidas</strong></div>
+        <div id="hoverRanking" class="hover-ranking">Carregando...</div>
+        <div id="hoverMatches" class="hover-matches"></div>
+        <div class="history-footer"><button id="hoverClear">Limpar</button></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
