@@ -50,18 +50,26 @@
 
 
       <div class="field">
-        <label for="playerSticks">Jogar Palitinhos</label>
-        <select id="playerSticks">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
+        <span id="playerSticksLabel">Jogar Palitinhos</span>
+        <div class="stick-selector" id="stickSelector" role="group" aria-labelledby="playerSticksLabel">
+          <button type="button" class="stick-choice" aria-label="Selecionar 1 palitinho" aria-pressed="false"></button>
+          <button type="button" class="stick-choice" aria-label="Selecionar 2 palitinhos" aria-pressed="false"></button>
+          <button type="button" class="stick-choice" aria-label="Selecionar 3 palitinhos" aria-pressed="false"></button>
+        </div>
+        <input type="hidden" id="playerSticks" value="0" />
       </div>
 
       <div class="field">
-        <label for="playerGuess">Pedir Palitinhos</label>
-        <input type="number" id="playerGuess" min="0" max="6" value="1" />
+        <span id="playerGuessLabel">Pedir Palitinhos</span>
+        <div class="stick-selector" id="guessSelector" role="group" aria-labelledby="playerGuessLabel">
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 1" aria-pressed="false"></button>
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 2" aria-pressed="false"></button>
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 3" aria-pressed="false"></button>
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 4" aria-pressed="false"></button>
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 5" aria-pressed="false"></button>
+          <button type="button" class="guess-choice" aria-label="Selecionar palpite 6" aria-pressed="false"></button>
+        </div>
+        <input type="hidden" id="playerGuess" min="0" max="6" value="0" />
       </div>
 
       
