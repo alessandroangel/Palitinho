@@ -13,6 +13,11 @@
   const resultWinner = document.getElementById('resultWinner');
   const closeFloat = document.getElementById('closeFloat');
 
+  /*Arualizando a barra para celular*/
+  window.addEventListener("load", () => {
+    atualizarBarras();
+});
+
   if (!playerNameInput || !nameListEl || !playerSticks || !playerGuess || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
     console.warn('Jogo do Palitinho: elementos obrigatórios não foram encontrados no DOM.');
     return;
