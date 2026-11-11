@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jogo do Palitinho</title>
@@ -11,6 +11,7 @@
   <main class="container">
     <h1>Jogo do Palitinho</h1>
     <div id="roundDisplay" class="round" aria-live="polite"></div>
+
     <!-- barras laterais de vida/progresso -->
     <aside id="leftBar" class="side-bar left-bar">
       <div class="bar-inner">
@@ -21,14 +22,15 @@
     </aside>
     <aside id="rightBar" class="side-bar right-bar">
       <div class="bar-inner">
-        <div class="bar-name" id="rightName">Computador</div>
+        <div class="bar-name" id="rightName">Oráculo</div>
         <div class="bar-track"><div class="bar-fill" id="rightFill" style="height:100%"></div></div>
         <div class="bar-percent" id="rightPercent">100%</div>
       </div>
     </aside>
 
+<!--
     <div class="center-image" aria-hidden="true">
-      <!-- simples SVG estilizado como imagem no centro -->
+      // simples SVG estilizado como imagem no centro
       <svg width="160" height="100" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="160" height="100" rx="12" fill="#f4f4f8"/>
         <g stroke="#8b5cf6" stroke-width="4" stroke-linecap="round">
@@ -37,7 +39,7 @@
           <line x1="40" y1="80" x2="160" y2="20" />
         </g>
       </svg>
-    </div>
+    </div> -->
 
     <section class="controls">
       <div class="field">
