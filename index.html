@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jogo do Palitinho</title>
-  <link rel="stylesheet" href="jogo-palitinho.css">
+  <link rel="stylesheet" href="Styles.css">
 </head>
 <body>
   <main class="container">
@@ -45,24 +45,23 @@
         <datalist id="nameList"></datalist>
       </div>
 
+
+      <div class="field">
+        <label for="playerSticks">Jogar Palitinhos</label>
+        <select id="playerSticks">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+
       <div class="field">
         <label for="playerGuess">Pedir Palitinhos</label>
         <input type="number" id="playerGuess" min="0" max="6" value="1" />
       </div>
-       <!-- <div class="field">
-          <label for="playerGuess">Pedir total (max 6) — faça isto antes de escolher palitinhos:</label>
-          <input type="number" id="playerGuess" min="0" max="6" placeholder="Digite total (0-6)" />
-        </div> <-->
 
-        <div class="field">
-          <label for="playerSticks">Jogar Palitinhos</label>
-          <select id="playerSticks" disabled>
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
-        </div>
+      
 
       <div class="buttons">
         <button id="betBtn">Apostar</button>
@@ -89,7 +88,6 @@
     </div>
   </main>
 
-  <script src="jogo-palitinho.js"></script>
   <!-- botão flutuante de histórico (expande ao passar o mouse) -->
   <div class="history-float" id="historyFloat">
     <button id="historyIcon" class="history-icon" aria-label="Histórico de partidas">🏆</button>
@@ -102,5 +100,6 @@
       </div>
     </div>
   </div>
+  <script src="Script.js"></script>
 </body>
 </html>
