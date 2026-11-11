@@ -6,6 +6,7 @@
   const stickSelector = document.getElementById('stickSelector');
   const playerGuess = document.getElementById('playerGuess');
   const guessSelector = document.getElementById('guessSelector');
+  const coinSound = new Audio('sons/coin.mp3');
   const betBtn = document.getElementById('betBtn');
   const newGameBtn = document.getElementById('newGameBtn');
   const log = document.getElementById('log');
@@ -173,6 +174,11 @@
 
   function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
+  function playCoinSound(){
+    coinSound.currentTime = 0;
+    coinSound.play().catch(error=>console.warn('Não foi possível reproduzir o som coin:', error));
+  }
+
   function updatePlayerSticks(){
     const choices = stickSelector.querySelectorAll('.stick-choice');
     let selectedCount = 0;
@@ -187,6 +193,7 @@
     if(!choice) return;
     choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
     updatePlayerSticks();
+    playCoinSound();
   });
 
   function updatePlayerGuess(){
@@ -208,6 +215,7 @@
     if(!choice) return;
     choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
     updatePlayerGuess();
+    playCoinSound();
   });
 
   // --- INÍCIO DA RONDA: SEM BLOQUEIOS, TOTAL LIBERDADE ---
