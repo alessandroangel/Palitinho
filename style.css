@@ -17,8 +17,6 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .buttons{display:flex;gap:10px;justify-content:center}
 .log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px}
 .log.warning{background:#fff7ed;border-color:#fcd34d;color:#92400e}
-.log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px}
-.log.warning{background:#fff7ed;border-color:#fcd34d;color:#92400e}
 .modal-overlay{display:none}
 .floating{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);width:360px;max-width:92vw}
 .floating .winner{font-weight:700;margin-top:8px;color:var(--accent)}
