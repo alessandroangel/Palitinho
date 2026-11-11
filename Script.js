@@ -3,7 +3,9 @@
   const playerNameInput = document.getElementById('playerName');
   const nameListEl = document.getElementById('nameList');
   const playerSticks = document.getElementById('playerSticks');
+  const stickSelector = document.getElementById('stickSelector');
   const playerGuess = document.getElementById('playerGuess');
+  const guessSelector = document.getElementById('guessSelector');
   const betBtn = document.getElementById('betBtn');
   const newGameBtn = document.getElementById('newGameBtn');
   const log = document.getElementById('log');
@@ -13,7 +15,7 @@
   const resultWinner = document.getElementById('resultWinner');
   const closeFloat = document.getElementById('closeFloat');
 
-  if (!playerNameInput || !nameListEl || !playerSticks || !playerGuess || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
+  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
     console.warn('Jogo do Palitinho: elementos obrigatórios não foram encontrados no DOM.');
     return;
   }
@@ -155,7 +157,7 @@
     if(e.key === 'Enter'){
       e.preventDefault();
       saveCurrentName();
-      const next = document.getElementById('playerGuess');
+      const next = guessSelector.querySelector('.guess-choice');
       if(next) next.focus();
     }
   });
@@ -171,6 +173,43 @@
 
   function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
+  function updatePlayerSticks(){
+    const choices = stickSelector.querySelectorAll('.stick-choice');
+    let selectedCount = 0;
+    choices.forEach(choice=>{
+      if(choice.getAttribute('aria-pressed') === 'true') selectedCount += 1;
+    });
+    playerSticks.value = String(selectedCount);
+  }
+
+  stickSelector.addEventListener('click', (e)=>{
+    const choice = e.target.closest('.stick-choice');
+    if(!choice) return;
+    choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
+    updatePlayerSticks();
+  });
+
+  function updatePlayerGuess(){
+    const choices = guessSelector.querySelectorAll('.guess-choice');
+    let selectedCount = 0;
+    choices.forEach(choice=>{
+      if(choice.getAttribute('aria-pressed') === 'true') selectedCount += 1;
+    });
+    playerGuess.value = String(selectedCount);
+  }
+
+  function clearGuessSelection(){
+    guessSelector.querySelectorAll('.guess-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+    playerGuess.value = '0';
+  }
+
+  guessSelector.addEventListener('click', (e)=>{
+    const choice = e.target.closest('.guess-choice');
+    if(!choice) return;
+    choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
+    updatePlayerGuess();
+  });
+
   // --- INÍCIO DA RONDA: SEM BLOQUEIOS, TOTAL LIBERDADE ---
   function startRound(){
     firstRound = (roundCount === 1);
@@ -185,19 +224,14 @@
 
     logMessage(firstRound ? 'Primeira Rodada: Jogar 0 palitinhos Perdi a Jogada!' : 'Nova rodada iniciada. Escolha à vontade e clique em Apostar.');
 
-    if(playerSticks) {
-      playerSticks.disabled = false;
-      playerSticks.value = '';
-    }
+    stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+    playerSticks.value = '0';
     if(playerGuess) {
       playerGuess.disabled = false;
       playerGuess.min = 0;
       playerGuess.max = 6;
-      playerGuess.value = '';
+      clearGuessSelection();
     }
-
-    const opt0 = playerSticks ? playerSticks.querySelector('option[value="0"]') : null;
-    if(opt0) opt0.disabled = false;
 
     updateRoundDisplay();
   }
@@ -256,10 +290,6 @@
     let pPick = Number(playerSticks.value);
     let pGuess = Number(playerGuess.value);
 
-    if(isNaN(pPick) || playerSticks.value === ''){
-      logWarning('Selecione quantos palitinhos quer jogar.');
-      return;
-    }
     if(isNaN(pGuess)){
       logWarning('Insira o seu palpite total.');
       return;
@@ -299,8 +329,9 @@
       aplicarDanoBarra('player');
       
       try{
-        playerGuess.value = '';
-        playerSticks.value = '';
+        clearGuessSelection();
+        stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+        playerSticks.value = '0';
       }catch(e){}
 
       pendingNextRound = true;
@@ -344,8 +375,9 @@
     modalOverlay.hidden = false;
 
     try{
-      playerGuess.value = '';
-      playerSticks.value = '';
+      clearGuessSelection();
+      stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+      playerSticks.value = '0';
     }catch(e){}
 
     try{
