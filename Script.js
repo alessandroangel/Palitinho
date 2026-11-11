@@ -6,6 +6,7 @@
   const stickSelector = document.getElementById('stickSelector');
   const playerGuess = document.getElementById('playerGuess');
   const guessSelector = document.getElementById('guessSelector');
+  const buttonSound = new Audio('sons/botao03.mp3');
   const coinSound = new Audio('sons/coin.mp3');
   const betBtn = document.getElementById('betBtn');
   const newGameBtn = document.getElementById('newGameBtn');
@@ -174,10 +175,27 @@
 
   function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
+  function playButtonSound(onEnded){
+    buttonSound.currentTime = 0;
+    if(onEnded) buttonSound.addEventListener('ended', onEnded, {once:true});
+    buttonSound.play().catch(error=>{
+      console.warn('Não foi possível reproduzir o som dos botões:', error);
+      if(onEnded){
+        buttonSound.removeEventListener('ended', onEnded);
+        onEnded();
+      }
+    });
+  }
+
   function playCoinSound(){
     coinSound.currentTime = 0;
-    coinSound.play().catch(error=>console.warn('Não foi possível reproduzir o som coin:', error));
+    coinSound.play().catch(error=>console.warn('Não foi possível reproduzir o som das bolinhas:', error));
   }
+
+  document.addEventListener('click', (e)=>{
+    const button = e.target.closest('button');
+    if(button && button !== newGameBtn && !button.matches('.stick-choice, .guess-choice')) playButtonSound();
+  });
 
   function updatePlayerSticks(){
     const choices = stickSelector.querySelectorAll('.stick-choice');
@@ -398,7 +416,7 @@
   });
 
   newGameBtn.addEventListener('click', ()=>{
-    window.location.reload();
+    playButtonSound(()=>window.location.reload());
   });
 
   closeFloat.addEventListener('click', ()=>{
