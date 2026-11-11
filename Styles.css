@@ -1,151 +1,415 @@
-:root{
-  --bg:#fff;
-  --accent:#7c3aed;
-  --muted:#666;
-}
-*{box-sizing:border-box;font-family:Segoe UI,Arial,Helvetica,sans-serif}
-body{margin:0;background:linear-gradient(180deg,#fafafa,#f0f4ff);color:#111}
-.container{max-width:760px;margin:28px auto;padding:20px}
-h1{text-align:center;color:var(--accent)}
-.center-image{display:flex;justify-content:center;margin:12px 0}
-.controls{display:grid;gap:12px;padding:12px;border-radius:8px}
-.field{display:flex;gap:8px;align-items:center}
-.field label{min-width:220px;color:var(--muted)}
-.field #playerSticksLabel{min-width:220px;color:var(--muted)}
-.field #playerGuessLabel{min-width:220px;color:var(--muted)}
-.stick-selector{display:flex;gap:10px;align-items:center}
-.stick-choice,.guess-choice{width:24px;height:24px;padding:0;border:2px solid var(--accent);border-radius:50%;background:#fff;cursor:pointer}
-.stick-choice[aria-pressed="true"],.guess-choice[aria-pressed="true"]{background:var(--accent)}
-.stick-choice:focus-visible,.guess-choice:focus-visible{outline:3px solid #c4b5fd;outline-offset:3px}
-input,select,button{padding:8px;border-radius:6px;border:1px solid #ddd}
-button{background:var(--accent);color:#fff;border:none;cursor:pointer}
-button:disabled{opacity:.6;cursor:not-allowed}
-.buttons{display:flex;gap:10px;justify-content:center}
-.log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px}
-.log.warning{background:#fff7ed;border-color:#fcd34d;color:#92400e}
-.modal-overlay{display:none}
-.floating{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);width:360px;max-width:92vw}
-.floating .winner{font-weight:700;margin-top:8px;color:var(--accent)}
-.modal-actions{display:flex;justify-content:flex-end;margin-top:12px}
-#closeFloat{padding:8px 12px;background:#444;color:#fff;border-radius:6px;border:none}
+(() => {
+  const STORAGE_KEY = 'jp_saved_names';
+  const playerNameInput = document.getElementById('playerName');
+  const nameListEl = document.getElementById('nameList');
+  const playerSticks = document.getElementById('playerSticks');
+  const stickSelector = document.getElementById('stickSelector');
+  const playerGuess = document.getElementById('playerGuess');
+  const guessSelector = document.getElementById('guessSelector');
+  const coinSound = new Audio('sons/coin.mp3');
+  const betBtn = document.getElementById('betBtn');
+  const newGameBtn = document.getElementById('newGameBtn');
+  const log = document.getElementById('log');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const floating = document.getElementById('floatingResult');
+  const resultDetails = document.getElementById('resultDetails');
+  const resultWinner = document.getElementById('resultWinner');
+  const closeFloat = document.getElementById('closeFloat');
 
-/*melhorar tela para celular*/
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 16px;
-}
-
-/*css melhoramento dos botões*/
-button {
-    background: #4f46e5;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #4338ca;
-}
-
-.stick-choice:hover[aria-pressed="false"],.guess-choice:hover[aria-pressed="false"] {
-    background: #fff;
-}
-
-/* Desracar history panel on mobile */
-#historico {
-    background:#f5f5f5;
-    padding:12px;
-    border-radius:8px;
-    max-height:300px;
-    overflow-y:auto;
-}
-
-/* overlay fullscreen */
-#modalOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:900}
-#modalOverlay[hidden]{display:none}
-
-.round{margin-top:6px;text-align:center;color:var(--muted);font-weight:600}
-
-@media(max-width:520px){
-  .field{flex-direction:column;align-items:flex-start}
-  .field label{min-width:unset}
-  .field #playerSticksLabel{min-width:unset}
-  .field #playerGuessLabel{min-width:unset}
-}
-
-/* floating history hover panel */
-.history-float{position:fixed;right:18px;bottom:18px;z-index:1200}
-.history-icon{width:54px;height:54px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.16)}
-.history-panel-hover{position:absolute;right:70px;bottom:0;width:420px;max-width:86vw;transform-origin:right bottom;transform:scale(0);transition:transform .18s ease;border-radius:10px;box-shadow:0 12px 36px rgba(0,0,0,.14);overflow:hidden}
-.history-float.open .history-panel-hover{transform:scale(1);}
-.history-panel-inner{background:rgba(255,255,255,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:12px;border:1px solid rgba(232,232,239,0.6)}
-.history-header{font-weight:700;margin-bottom:8px}
-.hover-ranking{background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee;margin-bottom:8px}
-.hover-matches{max-height:28vh;overflow:auto}
-.hover-matches .match{padding:8px;border-bottom:1px dashed #eee}
-.history-footer{display:flex;justify-content:flex-end;margin-top:10px}
-.history-footer button{background:#e11d48;color:#fff;border:none;padding:6px 10px;border-radius:6px}
-
-@media(max-width:520px){
-  .history-panel-hover{
-    position:fixed;
-    left:auto;
-    right:16px;
-    bottom:84px;
-    width:min(420px, calc(100vw - 32px));
-    max-width:calc(100vw - 32px);
-    max-height:calc(100vh - 110px);
-    max-height:calc(100dvh - 110px);
-    overflow-y:auto;
+  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
+    console.warn('Jogo do Palitinho: elementos obrigatórios não foram encontrados no DOM.');
+    return;
   }
-}
 
-/* side bars (player/computer progress) */
-.side-bar{position:fixed;top:0;bottom:0;transform:none;width:84px;z-index:1100;pointer-events:none}
-.side-bar .bar-inner{background:rgba(255,255,255,0.7);backdrop-filter:blur(4px);padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 20px rgba(0,0,0,0.08);pointer-events:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
-.left-bar{left:12px}
-.right-bar{right:12px}
-.bar-name{font-weight:700;margin-bottom:8px}
-.bar-track{width:24px;height:calc(100vh - 160px);background:#eee;border-radius:12px;overflow:hidden;margin:0 auto 8px;position:relative}
-.bar-fill{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(180deg,#06b6d4,#34d399);transition:height .28s ease}
-.bar-percent{text-align:center;font-size:13px;color:#444;font-weight:600}
+  // --- painel flutuante de histórico ---
+  const HISTORY_KEY = 'jp_matches_history';
+  function loadHoverHistory(){ try{ const raw = localStorage.getItem(HISTORY_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
+  function saveHoverHistory(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){} }
 
-@media(max-width:640px){
-  .side-bar{position:static;display:block;width:100%;height:auto;margin-bottom:6px}
-  .bar-inner{flex-direction:row !important;gap:6px;padding:6px !important}
-  .bar-name{max-width:64px;margin-bottom:0;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .bar-track{flex:1;width:auto;min-width:20px;height:10px;margin:0}
-  .bar-fill{top:0;bottom:0;right:auto;width:var(--progress,100%);height:100% !important;transition:width .28s ease}
-  .bar-percent{width:32px;font-size:11px}
-}
+  function initHistoryPanel(){
+    const floatContainer = document.getElementById('historyFloat');
+    const historyPanelHover = document.getElementById('historyPanelHover');
+    const hoverRanking = document.getElementById('hoverRanking');
+    const hoverMatches = document.getElementById('hoverMatches');
+    const hoverClear = document.getElementById('hoverClear');
+    let pinnedOpen = false;
 
-/* animação e estilo quando uma barra chegar a 0% */
-@keyframes pulse-red {
-  0%{ box-shadow:0 0 0 0 rgba(239,68,68,0.6); }
-  70%{ box-shadow:0 0 0 12px rgba(239,68,68,0); }
-  100%{ box-shadow:0 0 0 0 rgba(239,68,68,0); }
-}
-@keyframes shake-x {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-4px); }
- 100% { transform: translateX(0); }
-}
-.bar-fill.empty{ animation: pulse-red 1s ease-in-out infinite; background: linear-gradient(180deg,#ef4444,#fb923c) !important; }
-.bar-inner.shake{ animation: shake-x 0.6s ease-in-out; }
+    function setPanelOpen(open){
+      if(!floatContainer) return;
+      floatContainer.classList.toggle('open', open);
+      if(historyPanelHover) historyPanelHover.setAttribute('aria-hidden', String(!open));
+    }
 
-/* modal de alerta do perdedor */
-#loserOverlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1350 }
-#loserOverlay[hidden]{ display:none }
-#loserOverlay .loser-box{ background:#fff; padding:18px 22px; border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,.28); max-width:92vw; text-align:center }
-#loserOverlay .msg{ font-size:20px; font-weight:800; color:#b91c1c; margin-bottom:12px }
-#loserOverlay .sub{ color:#333; margin-bottom:14px }
-#loserOverlay .loser-box button{ background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer }
+    function renderHover(){
+      const arr = loadHoverHistory();
+      const counts = {};
+      arr.forEach(m=>{ if(!m.winner || m.winner === 'Empate') return; counts[m.winner] = (counts[m.winner]||0)+1; });
+      const ranked = Object.keys(counts).map(k=>({name:k,wins:counts[k]})).sort((a,b)=>b.wins-a.wins);
+      if(hoverRanking){
+        if(ranked.length===0) hoverRanking.textContent = 'Sem vitórias registradas.';
+        else hoverRanking.innerHTML = ranked.map(r=>`<div>${r.name}: ${r.wins} vitória(s)</div>`).join('');
+      }
+      if(hoverMatches){
+        hoverMatches.innerHTML = '';
+        if(arr.length===0){ hoverMatches.textContent = 'Nenhuma partida registrada.'; return; }
+        arr.slice(0,30).forEach(m=>{
+          const d = document.createElement('div'); d.className = 'match';
+          d.innerHTML = `<div><strong>R${m.round}</strong> ${m.player} (${m.pPick}/${m.pGuess}) vs C(${m.cPick}/${m.cGuess})</div><div>Total: ${m.total} — <small>${m.winner}</small></div>`;
+          hoverMatches.appendChild(d);
+        });
+      }
+    }
 
-@media(max-width:520px){
-  #loserOverlay .loser-box{ padding:14px; }
-}
+    if(floatContainer){
+      const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      floatContainer.addEventListener('mouseenter', ()=>{ if(supportsHover && !floatContainer.classList.contains('dragging')){ setPanelOpen(true); renderHover(); } });
+      floatContainer.addEventListener('mouseleave', ()=>{ if(supportsHover && !pinnedOpen && !floatContainer.classList.contains('dragging')) setPanelOpen(false); });
+      let dragging = false; let startX=0,startY=0, startLeft=0,startTop=0;
+      const icon = floatContainer.querySelector('.history-icon');
+      if(icon){
+        icon.addEventListener('click', ()=>{
+          if(supportsHover){
+            pinnedOpen = !pinnedOpen;
+            setPanelOpen(pinnedOpen);
+          } else {
+            setPanelOpen(!floatContainer.classList.contains('open'));
+          }
+          renderHover();
+        });
+      }
+      function clamp(val, min, max){ return Math.max(min, Math.min(max, val)); }
+      function onPointerMove(e){
+        if(!dragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const dx = clientX - startX; const dy = clientY - startY;
+        if(Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        if(e.cancelable) e.preventDefault();
+        const newLeft = clamp(startLeft + dx, 8, window.innerWidth - floatContainer.offsetWidth - 8);
+        const newTop = clamp(startTop + dy, 8, window.innerHeight - floatContainer.offsetHeight - 8);
+        floatContainer.style.left = newLeft + 'px';
+        floatContainer.style.top = newTop + 'px';
+        floatContainer.style.right = 'auto'; floatContainer.style.bottom = 'auto';
+      }
+      function onPointerUp(){
+        if(!dragging) return; dragging = false; floatContainer.classList.remove('dragging');
+        document.removeEventListener('mousemove', onPointerMove); document.removeEventListener('mouseup', onPointerUp);
+        document.removeEventListener('touchmove', onPointerMove); document.removeEventListener('touchend', onPointerUp);
+      }
+      function onPointerDown(e){
+        dragging = true; floatContainer.classList.add('dragging');
+        startX = e.touches ? e.touches[0].clientX : e.clientX; startY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = floatContainer.getBoundingClientRect(); startLeft = rect.left; startTop = rect.top;
+        document.addEventListener('mousemove', onPointerMove); document.addEventListener('mouseup', onPointerUp);
+        document.addEventListener('touchmove', onPointerMove, {passive:false}); document.addEventListener('touchend', onPointerUp);
+      }
+      if(icon){ icon.addEventListener('mousedown', onPointerDown); icon.addEventListener('touchstart', onPointerDown, {passive:false}); }
+    }
+
+    if(hoverClear){ hoverClear.addEventListener('click', ()=>{ if(confirm('Limpar histórico?')){ saveHoverHistory([]); renderHover(); } }); }
+  }
+
+  initHistoryPanel();
+  window.jpAddMatch = function(match){ try{ const list = loadHoverHistory(); list.unshift(match); saveHoverHistory(list); }catch(e){} };
+  // --- fim painel flutuante de histórico ---
+
+  let roundCount = 1;
+  let firstRound = true;
+  let computerPick = null;
+  let computerGuess = null;
+  let pendingNextRound = false;
+  const roundDisplay = document.getElementById('roundDisplay');
+
+  function updateRoundDisplay(){
+    if(roundDisplay) roundDisplay.textContent = `Jogada ${roundCount}`;
+  }
+
+  function loadNames(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    try{ return raw ? JSON.parse(raw) : []; }catch(e){return []}
+  }
+
+  function saveNames(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+
+  function populateNames(){
+    const names = loadNames();
+    nameListEl.innerHTML = '';
+    names.forEach(n=>{
+      const o = document.createElement('option'); o.value = n; nameListEl.appendChild(o);
+    });
+  }
+
+  function saveCurrentName(){
+    const name = (playerNameInput.value || '').trim();
+    if(!name) return;
+    const names = loadNames();
+    if(!names.includes(name)){
+      names.push(name);
+      saveNames(names);
+      populateNames();
+    }
+    const leftNameEl = document.getElementById('leftName');
+    if(leftNameEl) leftNameEl.textContent = name;
+  }
+
+  playerNameInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      saveCurrentName();
+      const next = guessSelector.querySelector('.guess-choice');
+      if(next) next.focus();
+    }
+  });
+  playerNameInput.addEventListener('blur', ()=>{ saveCurrentName(); });
+  playerNameInput.addEventListener('input', ()=>{
+    const leftNameEl = document.getElementById('leftName');
+    const v = (playerNameInput.value||'').trim() || 'Jogador';
+    if(leftNameEl) leftNameEl.textContent = v;
+  });
+
+  const initialLeft = document.getElementById('leftName');
+  if(initialLeft){ initialLeft.textContent = (playerNameInput.value||'').trim() || 'Jogador'; }
+
+  function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+  function playCoinSound(){
+    coinSound.currentTime = 0;
+    coinSound.play().catch(error=>console.warn('Não foi possível reproduzir o som coin:', error));
+  }
+
+  function updatePlayerSticks(){
+    const choices = stickSelector.querySelectorAll('.stick-choice');
+    let selectedCount = 0;
+    choices.forEach(choice=>{
+      if(choice.getAttribute('aria-pressed') === 'true') selectedCount += 1;
+    });
+    playerSticks.value = String(selectedCount);
+  }
+
+  stickSelector.addEventListener('click', (e)=>{
+    const choice = e.target.closest('.stick-choice');
+    if(!choice) return;
+    choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
+    updatePlayerSticks();
+    playCoinSound();
+  });
+
+  function updatePlayerGuess(){
+    const choices = guessSelector.querySelectorAll('.guess-choice');
+    let selectedCount = 0;
+    choices.forEach(choice=>{
+      if(choice.getAttribute('aria-pressed') === 'true') selectedCount += 1;
+    });
+    playerGuess.value = String(selectedCount);
+  }
+
+  function clearGuessSelection(){
+    guessSelector.querySelectorAll('.guess-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+    playerGuess.value = '0';
+  }
+
+  guessSelector.addEventListener('click', (e)=>{
+    const choice = e.target.closest('.guess-choice');
+    if(!choice) return;
+    choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'));
+    updatePlayerGuess();
+    playCoinSound();
+  });
+
+  // --- INÍCIO DA RONDA: SEM BLOQUEIOS, TOTAL LIBERDADE ---
+  function startRound(){
+    firstRound = (roundCount === 1);
+    
+    const minPickC = firstRound ? 1 : 0;
+    computerPick = randInt(minPickC, 3);
+    const capTotal = Math.min(6, computerPick + 3);
+    const extraMax = capTotal - computerPick;
+    const extra = randInt(0, extraMax);
+    computerGuess = computerPick + extra;
+    pendingNextRound = false;
+
+    logMessage(firstRound ? 'Primeira Rodada: Jogar 0 palitinhos Perdi a Jogada!' : 'Nova rodada iniciada. Escolha à vontade e clique em Apostar.');
+
+    stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+    playerSticks.value = '0';
+    if(playerGuess) {
+      playerGuess.disabled = false;
+      playerGuess.min = 0;
+      playerGuess.max = 6;
+      clearGuessSelection();
+    }
+
+    updateRoundDisplay();
+  }
+
+  function logMessage(txt){ if(log){ log.textContent = txt; log.classList.remove('warning'); } }
+  function logWarning(txt){ if(log){ log.textContent = txt; log.classList.add('warning'); } }
+
+  function showLoserModal(loserName){
+    try{
+      const loserOverlay = document.getElementById('loserOverlay');
+      const loserSub = document.getElementById('loserSub');
+      const loserReload = document.getElementById('loserReload');
+      if(loserSub) loserSub.textContent = loserName ? `${loserName} Bebeu tudo!` : 'Bebeu tudo!';
+      if(loserOverlay) loserOverlay.hidden = false;
+      if(betBtn) betBtn.disabled = true;
+      if(loserReload) loserReload.onclick = ()=>{ window.location.reload(); };
+    }catch(e){ }
+  }
+
+  function aplicarDanoBarra(perdedorTipo){
+    try{
+      const leftFill = document.getElementById('leftFill');
+      const rightFill = document.getElementById('rightFill');
+      const leftPercent = document.getElementById('leftPercent');
+      const rightPercent = document.getElementById('rightPercent');
+
+      function adjustBar(elFill, elPercent, delta){
+        if(!elFill || !elPercent) return;
+        const current = parseInt(elPercent.textContent.replace('%','')) || 100;
+        const next = Math.max(0, current - delta);
+        elFill.style.height = next + '%';
+        elFill.style.setProperty('--progress', next + '%');
+        elPercent.textContent = next + '%';
+        if(next === 0){
+          elFill.classList.add('empty');
+          const barInner = elFill.closest('.bar-inner');
+          if(barInner){ barInner.classList.add('shake'); setTimeout(()=> barInner.classList.remove('shake'), 800); }
+          const loserName = (elFill.id === 'leftFill') ? (document.getElementById('leftName') ? document.getElementById('leftName').textContent : 'Jogador') : 'Computador';
+          setTimeout(()=> showLoserModal(loserName), 300);
+        }
+      }
+
+      if(perdedorTipo === 'player'){
+        adjustBar(leftFill, leftPercent, 10);
+      } else if(perdedorTipo === 'computer'){
+        adjustBar(rightFill, rightPercent, 10);
+      }
+    }catch(e){}
+  }
+
+  // --- BOTÃO APOSTAR: AVALIA REGRAS COMO PUNIÇÃO ---
+  betBtn.addEventListener('click', ()=>{
+    const player = (playerNameInput.value||'').trim();
+    if(!player){ logWarning('Escolha ou informe o nome do jogador.'); return; }
+    
+    let pPick = Number(playerSticks.value);
+    let pGuess = Number(playerGuess.value);
+
+    if(isNaN(pGuess)){
+      logWarning('Insira o seu palpite total.');
+      return;
+    }
+
+    let regraViolada = false;
+    let motivoPunicao = '';
+
+    if(firstRound && pPick === 0){
+      regraViolada = true;
+      motivoPunicao = 'Jogaste 0 palitinhos na 1ª Rodada (Regra proibida)!';
+    } else if(pPick === 0 && pGuess > 3){
+      regraViolada = true;
+      motivoPunicao = 'Jogaste 0 palitinhos mas fizeste um palpite superior a 3!';
+    } else if(pGuess < pPick){
+      regraViolada = true;
+      motivoPunicao = 'O teu palpite total é menor do que os palitinhos que jogaste!';
+    } else if(pGuess === 6 && pPick < 3){
+      regraViolada = true;
+      motivoPunicao = 'Pediste 6 palitinhos mas jogaste menos do que 3!';
+    }
+
+    const cPick = computerPick;
+    let cGuess = computerGuess;
+    const total = pPick + cPick;
+
+    if(regraViolada){
+      resultDetails.innerHTML = `<div><strong>PUNIÇÃO!</strong> ${motivoPunicao}</div>
+        <div>Palitinhos Jogados ${player} = ${pPick} e Computador = ${cPick}</div>
+        <div>Palitinhos Pedidos ${player} = ${pGuess} e Computador = ${cGuess}</div>
+        <div>Total de Palitinhos ${total}</div>`;
+
+      resultWinner.textContent = `O vencedor é Computador (Por Punição)`;
+      closeFloat.textContent = 'Próxima rodada';
+      modalOverlay.hidden = false;
+
+      aplicarDanoBarra('player');
+      
+      try{
+        clearGuessSelection();
+        stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+        playerSticks.value = '0';
+      }catch(e){}
+
+      pendingNextRound = true;
+      return;
+    }
+
+    if(cGuess === pGuess){
+      const candidates = [];
+      const maxTotal = (cPick === 0) ? 3 : 6;
+      for(let v = cPick; v <= maxTotal; v++){
+        if(v !== pGuess) candidates.push(v);
+      }
+      if(candidates.length > 0){
+        cGuess = candidates[randInt(0, candidates.length - 1)];
+        computerGuess = cGuess;
+      }
+    }
+
+    resultDetails.innerHTML = `<div>Palitinhos Jogados ${player} = ${pPick} e Computador = ${cPick}</div>
+      <div>Palitinhos Pedidos ${player} = ${pGuess} e Computador = ${cGuess}</div>
+      <div>Total de Palitinhos ${total}</div>`;
+
+    let winnerText = '';
+    const playerHits = (pGuess === total);
+    const computerHits = (cGuess === total);
+    
+    if(playerHits && computerHits){ 
+      winnerText = `Empate: ${player} e Computador`; 
+    } else if(playerHits){ 
+      winnerText = `O vencedor é ${player}`; 
+      aplicarDanoBarra('computer');
+    } else if(computerHits){ 
+      winnerText = `O vencedor é Computador`; 
+      aplicarDanoBarra('player');
+    } else { 
+      winnerText = 'Ninguém acertou nesta rodada'; 
+    }
+
+    resultWinner.textContent = winnerText;
+    closeFloat.textContent = 'Próxima rodada';
+    modalOverlay.hidden = false;
+
+    try{
+      clearGuessSelection();
+      stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
+      playerSticks.value = '0';
+    }catch(e){}
+
+    try{
+      const winnerName = (playerHits && computerHits) ? 'Empate' : (playerHits ? player : (computerHits ? 'Computador' : ''));
+      const match = { round: roundCount, player, pPick, pGuess, cPick, cGuess, total, winner: winnerName };
+      if(window && typeof window.jpAddMatch === 'function') window.jpAddMatch(match);
+    }catch(e){}
+
+    if(!playerHits && !computerHits){ pendingNextRound = true; }
+  });
+
+  newGameBtn.addEventListener('click', ()=>{
+    window.location.reload();
+  });
+
+  closeFloat.addEventListener('click', ()=>{
+    modalOverlay.hidden = true;
+    roundCount += 1;
+    updateRoundDisplay();
+    startRound();
+  });
+
+  // Inicialização
+  populateNames();
+  updateRoundDisplay();
+  startRound();
+})();
