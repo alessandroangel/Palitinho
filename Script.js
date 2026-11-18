@@ -9,6 +9,10 @@
   const handDisplay = document.getElementById('handDisplay');
   const playHand = document.getElementById('playHand');
   const opponentHand = document.getElementById('opponentHand');
+  const leftNameEl = document.getElementById('leftName');
+  const rightNameEl = document.getElementById('rightName');
+  const playerHandName = document.getElementById('playerHandName');
+  const opponentHandName = document.getElementById('opponentHandName');
   const buttonSound = new Audio('sons/botao03.mp3');
   const coinSound = new Audio('sons/coin.mp3');
   const betBtn = document.getElementById('betBtn');
@@ -20,7 +24,7 @@
   const resultWinner = document.getElementById('resultWinner');
   const closeFloat = document.getElementById('closeFloat');
 
-  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !handDisplay || !playHand || !opponentHand || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
+  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !handDisplay || !playHand || !opponentHand || !leftNameEl || !rightNameEl || !playerHandName || !opponentHandName || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
     console.warn('Jogo do Palitinho: elementos obrigatórios não foram encontrados no DOM.');
     return;
   }
@@ -58,7 +62,7 @@
         if(arr.length===0){ hoverMatches.textContent = 'Nenhuma partida registrada.'; return; }
         arr.slice(0,30).forEach(m=>{
           const d = document.createElement('div'); d.className = 'match';
-          d.innerHTML = `<div><strong>R${m.round}</strong> ${m.player} (${m.pPick}/${m.pGuess}) vs C(${m.cPick}/${m.cGuess})</div><div>Total: ${m.total} — <small>${m.winner}</small></div>`;
+          d.innerHTML = `<div><strong>R${m.round}</strong> ${m.player} (${m.pPick}/${m.pGuess}) vs ${m.opponent || 'Oráculo'} (${m.cPick}/${m.cGuess})</div><div>Total: ${m.total} — <small>${m.winner}</small></div>`;
           hoverMatches.appendChild(d);
         });
       }
@@ -154,8 +158,13 @@
       saveNames(names);
       populateNames();
     }
-    const leftNameEl = document.getElementById('leftName');
-    if(leftNameEl) leftNameEl.textContent = name;
+    leftNameEl.textContent = name;
+    updateHandNames();
+  }
+
+  function updateHandNames(){
+    playerHandName.textContent = leftNameEl.textContent;
+    opponentHandName.textContent = rightNameEl.textContent;
   }
 
   playerNameInput.addEventListener('keydown', (e)=>{
@@ -168,13 +177,13 @@
   });
   playerNameInput.addEventListener('blur', ()=>{ saveCurrentName(); });
   playerNameInput.addEventListener('input', ()=>{
-    const leftNameEl = document.getElementById('leftName');
     const v = (playerNameInput.value||'').trim() || 'Jogador';
-    if(leftNameEl) leftNameEl.textContent = v;
+    leftNameEl.textContent = v;
+    updateHandNames();
   });
 
-  const initialLeft = document.getElementById('leftName');
-  if(initialLeft){ initialLeft.textContent = (playerNameInput.value||'').trim() || 'Jogador'; }
+  leftNameEl.textContent = (playerNameInput.value||'').trim() || 'Jogador';
+  updateHandNames();
 
   function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
@@ -319,7 +328,7 @@
           elFill.classList.add('empty');
           const barInner = elFill.closest('.bar-inner');
           if(barInner){ barInner.classList.add('shake'); setTimeout(()=> barInner.classList.remove('shake'), 800); }
-          const loserName = (elFill.id === 'leftFill') ? (document.getElementById('leftName') ? document.getElementById('leftName').textContent : 'Jogador') : 'Computador';
+          const loserName = (elFill.id === 'leftFill') ? leftNameEl.textContent : rightNameEl.textContent;
           setTimeout(()=> showLoserModal(loserName), 300);
         }
       }
@@ -336,6 +345,9 @@
   betBtn.addEventListener('click', ()=>{
     const player = (playerNameInput.value||'').trim();
     if(!player){ logWarning('Escolha ou informe o nome do jogador.'); return; }
+    leftNameEl.textContent = player;
+    updateHandNames();
+    const opponent = rightNameEl.textContent;
     
     let pPick = Number(playerSticks.value);
     let pGuess = Number(playerGuess.value);
@@ -369,11 +381,11 @@
 
     if(regraViolada){
       resultDetails.innerHTML = `<div><strong>PUNIÇÃO!</strong> ${motivoPunicao}</div>
-        <div>Palitinhos Jogados ${player} = ${pPick} e Computador = ${cPick}</div>
-        <div>Palitinhos Pedidos ${player} = ${pGuess} e Computador = ${cGuess}</div>
+        <div>Palitinhos Jogados ${player} = ${pPick} e ${opponent} = ${cPick}</div>
+        <div>Palitinhos Pedidos ${player} = ${pGuess} e ${opponent} = ${cGuess}</div>
         <div>Total de Palitinhos ${total}</div>`;
 
-      resultWinner.textContent = `O vencedor é Computador (Por Punição)`;
+      resultWinner.textContent = `O vencedor é ${opponent} (Por Punição)`;
       closeFloat.textContent = 'Próxima rodada';
       modalOverlay.hidden = false;
 
@@ -401,8 +413,8 @@
       }
     }
 
-    resultDetails.innerHTML = `<div>Palitinhos Jogados ${player} = ${pPick} e Computador = ${cPick}</div>
-      <div>Palitinhos Pedidos ${player} = ${pGuess} e Computador = ${cGuess}</div>
+    resultDetails.innerHTML = `<div>Palitinhos Jogados ${player} = ${pPick} e ${opponent} = ${cPick}</div>
+      <div>Palitinhos Pedidos ${player} = ${pGuess} e ${opponent} = ${cGuess}</div>
       <div>Total de Palitinhos ${total}</div>`;
 
     let winnerText = '';
@@ -410,12 +422,12 @@
     const computerHits = (cGuess === total);
     
     if(playerHits && computerHits){ 
-      winnerText = `Empate: ${player} e Computador`; 
+      winnerText = `Empate: ${player} e ${opponent}`; 
     } else if(playerHits){ 
       winnerText = `O vencedor é ${player}`; 
       aplicarDanoBarra('computer');
     } else if(computerHits){ 
-      winnerText = `O vencedor é Computador`; 
+      winnerText = `O vencedor é ${opponent}`; 
       aplicarDanoBarra('player');
     } else { 
       winnerText = 'Ninguém acertou nesta rodada'; 
@@ -432,8 +444,8 @@
     }catch(e){}
 
     try{
-      const winnerName = (playerHits && computerHits) ? 'Empate' : (playerHits ? player : (computerHits ? 'Computador' : ''));
-      const match = { round: roundCount, player, pPick, pGuess, cPick, cGuess, total, winner: winnerName };
+      const winnerName = (playerHits && computerHits) ? 'Empate' : (playerHits ? player : (computerHits ? opponent : ''));
+      const match = { round: roundCount, player, opponent, pPick, pGuess, cPick, cGuess, total, winner: winnerName };
       if(window && typeof window.jpAddMatch === 'function') window.jpAddMatch(match);
     }catch(e){}
 
