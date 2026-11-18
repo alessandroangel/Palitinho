@@ -6,6 +6,9 @@
   const stickSelector = document.getElementById('stickSelector');
   const playerGuess = document.getElementById('playerGuess');
   const guessSelector = document.getElementById('guessSelector');
+  const handDisplay = document.getElementById('handDisplay');
+  const playHand = document.getElementById('playHand');
+  const opponentHand = document.getElementById('opponentHand');
   const buttonSound = new Audio('sons/botao03.mp3');
   const coinSound = new Audio('sons/coin.mp3');
   const betBtn = document.getElementById('betBtn');
@@ -17,7 +20,7 @@
   const resultWinner = document.getElementById('resultWinner');
   const closeFloat = document.getElementById('closeFloat');
 
-  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
+  if (!playerNameInput || !nameListEl || !playerSticks || !stickSelector || !playerGuess || !guessSelector || !handDisplay || !playHand || !opponentHand || !betBtn || !newGameBtn || !log || !modalOverlay || !resultDetails || !resultWinner || !closeFloat) {
     console.warn('Jogo do Palitinho: elementos obrigatórios não foram encontrados no DOM.');
     return;
   }
@@ -192,6 +195,24 @@
     coinSound.play().catch(error=>console.warn('Não foi possível reproduzir o som das bolinhas:', error));
   }
 
+  const handGestures = ['✊', '☝️', '✌️', '🤟', '🖖', '🖐️', '🖐️☝️'];
+
+  function updateHand(hand, quantity){
+    const count = Math.max(0, Math.min(6, Number(quantity) || 0));
+    hand.textContent = handGestures[count];
+    hand.setAttribute('aria-label', count === 0 ? 'Punho fechado, nenhum palitinho' : `${count} ${count === 1 ? 'dedo' : 'dedos'}`);
+  }
+
+  function updatePlayerHand(){
+    updateHand(playHand, playerSticks.value);
+  }
+
+  function showRoundHands(playerCount, opponentCount){
+    updateHand(playHand, playerCount);
+    updateHand(opponentHand, opponentCount);
+    handDisplay.hidden = false;
+  }
+
   document.addEventListener('click', (e)=>{
     const button = e.target.closest('button');
     if(button && button !== newGameBtn && !button.matches('.stick-choice, .guess-choice')) playButtonSound();
@@ -204,6 +225,7 @@
       if(choice.getAttribute('aria-pressed') === 'true') selectedCount += 1;
     });
     playerSticks.value = String(selectedCount);
+    updatePlayerHand();
   }
 
   stickSelector.addEventListener('click', (e)=>{
@@ -238,6 +260,7 @@
 
   // --- INÍCIO DA RONDA: SEM BLOQUEIOS, TOTAL LIBERDADE ---
   function startRound(){
+    handDisplay.hidden = false;
     firstRound = (roundCount === 1);
     
     const minPickC = firstRound ? 1 : 0;
@@ -252,13 +275,14 @@
 
     stickSelector.querySelectorAll('.stick-choice').forEach(choice=>choice.setAttribute('aria-pressed', 'false'));
     playerSticks.value = '0';
+    updatePlayerHand();
+    updateHand(opponentHand, 0);
     if(playerGuess) {
       playerGuess.disabled = false;
       playerGuess.min = 0;
       playerGuess.max = 6;
       clearGuessSelection();
     }
-
     updateRoundDisplay();
   }
 
@@ -339,6 +363,7 @@
     }
 
     const cPick = computerPick;
+    showRoundHands(pPick, cPick);
     let cGuess = computerGuess;
     const total = pPick + cPick;
 
