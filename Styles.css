@@ -1,12 +1,62 @@
 :root{
   --bg:#fff;
   --accent:#7c3aed;
-  --muted:#666;
+  --muted:#c9c4b8;
 }
 *{box-sizing:border-box;font-family:Segoe UI,Arial,Helvetica,sans-serif}
-body{margin:0;background:linear-gradient(180deg,#fafafa,#f0f4ff);color:#111}
+body{
+  margin:0;
+  min-height:100vh;
+  color:#f5f0e2;
+  background:
+    radial-gradient(ellipse 30% 85% at 0% 50%,rgba(190,145,42,.24),transparent 100%),
+    radial-gradient(ellipse 30% 85% at 100% 50%,rgba(190,145,42,.24),transparent 100%),
+    radial-gradient(ellipse at center,#171612 0%,#0d0d0b 62%,#070707 100%);
+  background-attachment:fixed;
+}
 .container{max-width:760px;margin:28px auto;padding:20px}
-h1{text-align:center;color:var(--accent)}
+h1{
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+  color:#d4af37;
+  background:linear-gradient(90deg,#8a5a00 0%,#ffd700 22%,#fff3a6 48%,#d4af37 72%,#9a6800 100%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:4px 4px 0 #111, 7px 7px 10px rgba(0,0,0,.55);
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.35));
+  animation:title-gold 4.5s ease-in-out infinite;
+}
+
+h1::after{
+  content:"";
+  position:absolute;
+  top:58%;
+  left:-2.4em;
+  width:2.4em;
+  height:.3em;
+  transform:translateY(-50%);
+  background:
+    radial-gradient(circle at 100% 50%,#fff 0 .045em,#fff8aa .075em,rgba(255,248,170,.5) .11em,transparent .16em),
+    linear-gradient(90deg,transparent,rgba(255,255,255,.18) 72%,rgba(255,248,170,.75));
+  filter:blur(.025em);
+  mix-blend-mode:screen;
+  pointer-events:none;
+  animation:title-light 3.2s linear infinite;
+}
+
+@keyframes title-gold{
+  0%,100%{background-position:100% 0}
+  50%{background-position:0 0}
+}
+
+@keyframes title-light{
+  0%{left:-2.4em;opacity:0}
+  5%,95%{opacity:1}
+  100%{left:calc(100% + 2.4em);opacity:0}
+}
 .center-image{display:flex;justify-content:center;margin:12px 0}
 .controls{display:grid;gap:12px;padding:12px;border-radius:8px}
 .field{display:flex;gap:8px;align-items:center}
@@ -21,10 +71,10 @@ input,select,button{padding:8px;border-radius:6px;border:1px solid #ddd}
 button{background:var(--accent);color:#fff;border:none;cursor:pointer}
 button:disabled{opacity:.6;cursor:not-allowed}
 .buttons{display:flex;gap:10px;justify-content:center}
-.log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px}
+.log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px;color:#111}
 .log.warning{background:#fff7ed;border-color:#fcd34d;color:#92400e}
 .modal-overlay{display:none}
-.floating{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);width:360px;max-width:92vw}
+.floating{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);width:360px;max-width:92vw;color:#111}
 .floating .winner{font-weight:700;margin-top:8px;color:var(--accent)}
 .modal-actions{display:flex;justify-content:flex-end;margin-top:12px}
 #closeFloat{padding:8px 12px;background:#444;color:#fff;border-radius:6px;border:none}
@@ -61,6 +111,7 @@ button:hover {
     border-radius:8px;
     max-height:300px;
     overflow-y:auto;
+  color:#111;
 }
 
 /* overlay fullscreen */
@@ -81,7 +132,7 @@ button:hover {
 .history-icon{width:54px;height:54px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.16)}
 .history-panel-hover{position:absolute;right:70px;bottom:0;width:420px;max-width:86vw;transform-origin:right bottom;transform:scale(0);transition:transform .18s ease;border-radius:10px;box-shadow:0 12px 36px rgba(0,0,0,.14);overflow:hidden}
 .history-float.open .history-panel-hover{transform:scale(1);}
-.history-panel-inner{background:rgba(255,255,255,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:12px;border:1px solid rgba(232,232,239,0.6)}
+.history-panel-inner{background:rgba(255,255,255,0.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:12px;border:1px solid rgba(232,232,239,0.6);color:#111}
 .history-header{font-weight:700;margin-bottom:8px}
 .hover-ranking{background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee;margin-bottom:8px}
 .hover-matches{max-height:28vh;overflow:auto}
@@ -105,13 +156,15 @@ button:hover {
 
 /* side bars (player/computer progress) */
 .side-bar{position:fixed;top:0;bottom:0;transform:none;width:84px;z-index:1100;pointer-events:none}
-.side-bar .bar-inner{background:rgba(255,255,255,0.7);backdrop-filter:blur(4px);padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 20px rgba(0,0,0,0.08);pointer-events:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
+.side-bar .bar-inner{background:rgba(25,23,18,.58);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:8px;border-radius:8px;border:1px solid rgba(255,223,128,.25);box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.12);pointer-events:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
 .left-bar{left:12px}
 .right-bar{right:12px}
-.bar-name{font-weight:700;margin-bottom:8px}
-.bar-track{width:24px;height:calc(100vh - 160px);background:#eee;border-radius:12px;overflow:hidden;margin:0 auto 8px;position:relative}
-.bar-fill{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(180deg,#06b6d4,#34d399);transition:height .28s ease}
-.bar-percent{text-align:center;font-size:13px;color:#444;font-weight:600}
+.bar-name{font-weight:700;margin-bottom:8px;color:#f5e8bd}
+.bar-track{width:24px;height:calc(100vh - 160px);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:12px;overflow:hidden;margin:0 auto 8px;position:relative;box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 0 8px rgba(255,220,130,.08)}
+.bar-fill{position:absolute;left:0;right:0;bottom:0;height:100%;background:linear-gradient(90deg,rgba(255,255,255,.14),transparent 35%),linear-gradient(180deg,#ffe28a 0%,#d89b27 24%,#b87812 100%);transition:height .28s ease;box-shadow:inset 0 0 8px rgba(255,244,190,.35),0 0 10px rgba(218,161,46,.3)}
+.bar-fill::before{content:"";position:absolute;top:-4px;left:-25%;width:150%;height:9px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,249,218,.95),rgba(255,225,139,.55) 42%,transparent 75%);filter:blur(1px)}
+.bar-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.2),transparent 38%,transparent 75%,rgba(255,255,255,.08));pointer-events:none}
+.bar-percent{text-align:center;font-size:13px;color:#f5e8bd;font-weight:600}
 
 @media(max-width:640px){
   .side-bar{position:static;display:block;width:100%;height:auto;margin-bottom:6px}
@@ -119,6 +172,7 @@ button:hover {
   .bar-name{max-width:64px;margin-bottom:0;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bar-track{flex:1;width:auto;min-width:20px;height:10px;margin:0}
   .bar-fill{top:0;bottom:0;right:auto;width:var(--progress,100%);height:100% !important;transition:width .28s ease}
+  .bar-fill::before{top:50%;left:auto;right:-4px;width:9px;height:160%;transform:translateY(-50%);background:radial-gradient(ellipse,rgba(255,249,218,.95),rgba(255,225,139,.55) 42%,transparent 75%)}
   .bar-percent{width:32px;font-size:11px}
 }
 
@@ -141,7 +195,7 @@ button:hover {
 /* modal de alerta do perdedor */
 #loserOverlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1350 }
 #loserOverlay[hidden]{ display:none }
-#loserOverlay .loser-box{ background:#fff; padding:18px 22px; border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,.28); max-width:92vw; text-align:center }
+#loserOverlay .loser-box{ background:#fff; padding:18px 22px; border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,.28); max-width:92vw; text-align:center; color:#111 }
 #loserOverlay .msg{ font-size:20px; font-weight:800; color:#b91c1c; margin-bottom:12px }
 #loserOverlay .sub{ color:#333; margin-bottom:14px }
 #loserOverlay .loser-box button{ background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer }
@@ -149,4 +203,3 @@ button:hover {
 @media(max-width:520px){
   #loserOverlay .loser-box{ padding:14px; }
 }
-
