@@ -63,10 +63,27 @@ h1::after{
 .field label{min-width:220px;color:var(--muted)}
 .field #playerSticksLabel{min-width:220px;color:var(--muted)}
 .field #playerGuessLabel{min-width:220px;color:var(--muted)}
-.stick-selector{display:flex;gap:10px;align-items:center}
-.stick-choice,.guess-choice{width:24px;height:24px;padding:0;border:2px solid var(--accent);border-radius:50%;background:#fff;cursor:pointer}
-.stick-choice[aria-pressed="true"],.guess-choice[aria-pressed="true"]{background:var(--accent)}
+.stick-selector{display:flex;gap:8px;align-items:center}
+.stick-choice,.guess-choice{
+  width:36px;
+  height:36px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background-color:transparent;
+  background-image:url("icones/pp01.png");
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:contain;
+  cursor:pointer;
+  transition:filter .2s ease;
+}
+.stick-choice[aria-pressed="true"],.guess-choice[aria-pressed="true"]{
+  filter:brightness(1.28) saturate(.9) drop-shadow(0 0 4px rgba(255,230,130,.75));
+  animation:coin-spin .55s ease-out;
+}
 .stick-choice:focus-visible,.guess-choice:focus-visible{outline:3px solid #c4b5fd;outline-offset:3px}
+@keyframes coin-spin{to{transform:rotate(360deg)}}
 input,select,button{padding:8px;border-radius:6px;border:1px solid #ddd}
 button{background:var(--accent);color:#fff;border:none;cursor:pointer}
 button:disabled{opacity:.6;cursor:not-allowed}
@@ -108,7 +125,7 @@ button:hover {
 }
 
 .stick-choice:hover[aria-pressed="false"],.guess-choice:hover[aria-pressed="false"] {
-    background: #fff;
+    filter:brightness(1.1);
 }
 
 /* Desracar history panel on mobile */
