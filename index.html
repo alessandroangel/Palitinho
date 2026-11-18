@@ -82,6 +82,30 @@
 
     <div id="log" class="log" aria-live="polite"></div>
 
+    <div class="hands-ranking-row">
+      <div class="hand-display" id="handDisplay" aria-label="Palitinhos jogados nesta rodada">
+        <div class="hand-indicator">
+          <span class="hand-label">Jogador</span>
+          <span class="hand-value" id="playHand" aria-label="Punho fechado">✊</span>
+        </div>
+        <div class="hand-indicator">
+          <span class="hand-label">Jogador 2</span>
+          <span class="hand-value" id="opponentHand" aria-label="Punho fechado">✊</span>
+        </div>
+      </div>
+      <div class="history-float" id="historyFloat">
+        <button id="historyIcon" class="history-icon" aria-label="Histórico de partidas">🏆</button>
+        <div id="historyPanelHover" class="history-panel-hover" aria-hidden="true">
+          <div class="history-panel-inner">
+            <div class="history-header"><strong>Partidas</strong></div>
+            <div id="hoverRanking" class="hover-ranking">Carregando...</div>
+            <div id="hoverMatches" class="hover-matches"></div>
+            <div class="history-footer"><button id="hoverClear">Limpar</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="modalOverlay" hidden>
       <div id="floatingResult" class="floating">
         <div id="resultDetails"></div>
@@ -92,25 +116,13 @@
     <!-- modal de alerta quando uma das barras chegar a 0% -->
     <div id="loserOverlay" hidden>
       <div class="loser-box" role="dialog" aria-modal="true">
-        <div class="msg">Bebeu perdedor</div>
+        <div class="msg">Bebe Sua Dose</div>
         <div class="sub" id="loserSub">Você acabou a sua barra.</div>
         <button id="loserReload">Voltar ao jogo</button>
       </div>
     </div>
   </main>
 
-  <!-- botão flutuante de histórico (expande ao passar o mouse) -->
-  <div class="history-float" id="historyFloat">
-    <button id="historyIcon" class="history-icon" aria-label="Histórico de partidas">🏆</button>
-    <div id="historyPanelHover" class="history-panel-hover" aria-hidden="true">
-      <div class="history-panel-inner">
-        <div class="history-header"><strong>Partidas</strong></div>
-        <div id="hoverRanking" class="hover-ranking">Carregando...</div>
-        <div id="hoverMatches" class="hover-matches"></div>
-        <div class="history-footer"><button id="hoverClear">Limpar</button></div>
-      </div>
-    </div>
-  </div>
   <script src="Script.js"></script>
 </body>
 </html>
