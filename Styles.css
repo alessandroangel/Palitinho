@@ -34,14 +34,14 @@ h1::after{
   content:"";
   position:absolute;
   top:58%;
-  left:-2.4em;
-  width:2.4em;
-  height:.3em;
+  left:-3.2em;
+  width:3.2em;
+  height:.45em;
   transform:translateY(-50%);
   background:
-    radial-gradient(circle at 100% 50%,#fff 0 .045em,#fff8aa .075em,rgba(255,248,170,.5) .11em,transparent .16em),
-    linear-gradient(90deg,transparent,rgba(255,255,255,.18) 72%,rgba(255,248,170,.75));
-  filter:blur(.025em);
+    radial-gradient(circle at 100% 50%,#fff 0 .07em,#fff  .11em,rgba(255,248,170,.98) .19em,rgba(255,215,100,.82) .3em,transparent .48em),
+    linear-gradient(90deg,transparent,rgba(255,255,255,.32) 65%,rgba(255,248,170,.95));
+  filter:blur(.025em) drop-shadow(0 0 .25em #fff3a6);
   mix-blend-mode:screen;
   pointer-events:none;
   animation:title-light 3.2s linear infinite;
@@ -53,9 +53,9 @@ h1::after{
 }
 
 @keyframes title-light{
-  0%{left:-2.4em;opacity:0}
-  5%,95%{opacity:1}
-  100%{left:calc(100% + 2.4em);opacity:0}
+  0%{left:-3.2em;opacity:0}
+  3%,97%{opacity:1}
+  100%{left:calc(100% + 3.2em);opacity:0}
 }
 .center-image{display:flex;justify-content:center;margin:12px 0}
 .controls{display:grid;gap:12px;padding:12px;border-radius:8px}
@@ -73,6 +73,13 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .buttons{display:flex;gap:10px;justify-content:center}
 .log{margin-top:12px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;min-height:44px;color:#111}
 .log.warning{background:#fff7ed;border-color:#fcd34d;color:#92400e}
+.hands-ranking-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:12px}
+.hand-display{display:flex;align-items:center;gap:24px}
+.hand-display[hidden]{display:none}
+.hand-indicator{display:flex;align-items:center;gap:8px;min-width:82px}
+.hand-label{color:#f5e8bd;font-size:13px;font-weight:600}
+.hand-value{font-size:34px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.hand-value,.history-icon{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
 .modal-overlay{display:none}
 .floating{background:#fff;border:1px solid #ddd;padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.16);width:360px;max-width:92vw;color:#111}
 .floating .winner{font-weight:700;margin-top:8px;color:var(--accent)}
@@ -128,7 +135,7 @@ button:hover {
 }
 
 /* floating history hover panel */
-.history-float{position:fixed;right:18px;bottom:18px;z-index:1200}
+.history-float{position:fixed;right:18px;bottom:18px;z-index:1200;flex:0 0 auto}
 .history-icon{width:54px;height:54px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.16)}
 .history-panel-hover{position:absolute;right:70px;bottom:0;width:420px;max-width:86vw;transform-origin:right bottom;transform:scale(0);transition:transform .18s ease;border-radius:10px;box-shadow:0 12px 36px rgba(0,0,0,.14);overflow:hidden}
 .history-float.open .history-panel-hover{transform:scale(1);}
