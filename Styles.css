@@ -134,7 +134,7 @@ button:hover {
     padding: 0 12px;
     border-radius: 24px;
     background-color: transparent;
-    background-image: url("icones/btvidro01.jpg");
+    background-image: url("icones/btcolor01.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
@@ -145,6 +145,7 @@ button:hover {
     isolation: isolate;
 }
 
+/* adiciona cor dentro do botão
 .buttons button::before {
     content: "";
     position: absolute;
@@ -154,7 +155,7 @@ button:hover {
     background: linear-gradient(180deg,#fff1ad 0%,#f4cc4e 32%,#d99f19 68%,#f8da79 100%);
     box-shadow: inset 0 1px 4px rgba(255,255,255,.85), inset 0 -2px 5px rgba(105,68,0,.4);
     pointer-events: none;
-}
+}*/
 
 .buttons button span {
     position: relative;
